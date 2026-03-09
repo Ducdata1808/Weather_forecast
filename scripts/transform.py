@@ -6,6 +6,8 @@ from pyspark.sql.functions import col, month, hour, sin, cos, round, lit, when, 
 from pyspark.ml.feature import StringIndexer, OneHotEncoder
 import shutil
 
+os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-17-openjdk-amd64"
+
 def get_spark_session():
     return SparkSession.builder \
         .appName("WeatherForecastTransformation") \
@@ -147,10 +149,10 @@ def load_data(df, hdfs_output_dir, local_data_dir):
         print(f"[-] Lỗi khi upload lên HDFS:\n{result.stderr}")
 
 if __name__ == "__main__":
-    # Cấu hình đường dẫn
-    HDFS_ACTUAL_PATTERN = "/weather_data/raw_actual_*.parquet"
-    HDFS_FORECAST_PATTERN = "/weather_data/raw_forecast_*.parquet"
-    HDFS_OUTPUT_DIR = "/weather_data"               
+    # Cấu hình đường dẫn tuyệt đối HDFS
+    HDFS_ACTUAL_PATTERN = "hdfs://localhost:9000/weather_data/raw_actual_*.parquet"
+    HDFS_FORECAST_PATTERN = "hdfs://localhost:9000/weather_data/raw_forecast_*.parquet"
+    HDFS_OUTPUT_DIR = "/weather_data" # Đường dẫn này giữ nguyên vì dùng cho lệnh gọi shell hdfs dfs -put               
     script_dir = os.path.dirname(os.path.abspath(__file__))
     project_dir = os.path.dirname(script_dir)
     LOCAL_DATA_DIR = os.path.join(project_dir, "data")
