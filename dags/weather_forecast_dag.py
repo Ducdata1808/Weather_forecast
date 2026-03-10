@@ -17,7 +17,7 @@ default_args = {
 }
 
 # Khai báo đường dẫn trỏ tới thư mục script của bạn
-SCRIPT_DIR = "/home/duc1808/weather_forecast_project/scripts"
+SCRIPT_DIR = "/opt/airflow/scripts"
 
 # =====================================================================
 # DAG 1: LẤY DỮ LIỆU DỰ BÁO (1 Lần/Ngày lúc 0h05 sáng)
