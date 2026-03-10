@@ -94,22 +94,22 @@ if response.status_code == 200:
     df.to_parquet(local_file_path, index=False)
     print(f"\n[+] Đã xuất file local tại: {local_file_path}")
     
-    # 2. Lưu file lên HDFS: /weather_data/raw_YYYYMMDD_HHMMSS.parquet
-    hdfs_dir = "/weather_data"
-    hdfs_file_path = f"{hdfs_dir}/{file_name}"
-    
-    try:
-        # Tạo thư mục trên HDFS nếu chưa có
-        subprocess.run(["hdfs", "dfs", "-mkdir", "-p", hdfs_dir], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        
-        # Đưa file từ local lên HDFS
-        result = subprocess.run(["hdfs", "dfs", "-put", local_file_path, hdfs_file_path], capture_output=True, text=True)
-        if result.returncode == 0:
-            print(f"[+] Đã upload thành công lên HDFS tại: {hdfs_file_path}")
-        else:
-            print(f"[-] Lỗi khi upload lên HDFS:\n{result.stderr}")
-    except FileNotFoundError:
-        print("[-] Lỗi: Không tìm thấy lệnh 'hdfs'. Vui lòng kiểm tra lại môi trường Hadoop.")
+    # 2. Lưu file lên HDFS (tạm thời comment vì chỉ lưu local)
+    # hdfs_dir = "/weather_data"
+    # hdfs_file_path = f"{hdfs_dir}/{file_name}"
+    # 
+    # try:
+    #     # Tạo thư mục trên HDFS nếu chưa có
+    #     subprocess.run(["hdfs", "dfs", "-mkdir", "-p", hdfs_dir], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    #     
+    #     # Đưa file từ local lên HDFS
+    #     result = subprocess.run(["hdfs", "dfs", "-put", local_file_path, hdfs_file_path], capture_output=True, text=True)
+    #     if result.returncode == 0:
+    #         print(f"[+] Đã upload thành công lên HDFS tại: {hdfs_file_path}")
+    #     else:
+    #         print(f"[-] Lỗi khi upload lên HDFS:\n{result.stderr}")
+    # except FileNotFoundError:
+    #     print("[-] Lỗi: Không tìm thấy lệnh 'hdfs'. Vui lòng kiểm tra lại môi trường Hadoop.")
 else:
     print("[-] Lỗi khi gọi API:")
     print(response.json())

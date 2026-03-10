@@ -138,25 +138,29 @@ def load_data(df, hdfs_output_dir, local_data_dir):
     shutil.rmtree(local_tmp_path)
     print(f"\n[+] Đã xuất file Local (Machine Learning Ready Dataset) tại: {local_final_path}")
     
-    # Upload lên HDFS
-    hdfs_file_path = f"{hdfs_output_dir}/{file_name}"
-    subprocess.run(["hdfs", "dfs", "-mkdir", "-p", hdfs_output_dir], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    
-    result = subprocess.run(["hdfs", "dfs", "-put", local_final_path, hdfs_file_path], capture_output=True, text=True)
-    if result.returncode == 0:
-        print(f"[+] Đã upload thành công lên HDFS tại: {hdfs_file_path}")
-    else:
-        print(f"[-] Lỗi khi upload lên HDFS:\n{result.stderr}")
+    # Upload lên HDFS (tạm thời comment lại)
+    # hdfs_file_path = f"{hdfs_output_dir}/{file_name}"
+    # subprocess.run(["hdfs", "dfs", "-mkdir", "-p", hdfs_output_dir], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    # 
+    # result = subprocess.run(["hdfs", "dfs", "-put", local_final_path, hdfs_file_path], capture_output=True, text=True)
+    # if result.returncode == 0:
+    #     print(f"[+] Đã upload thành công lên HDFS tại: {hdfs_file_path}")
+    # else:
+    #     print(f"[-] Lỗi khi upload lên HDFS:\n{result.stderr}")
 
 if __name__ == "__main__":
-    # Cấu hình đường dẫn tuyệt đối HDFS
-    HDFS_ACTUAL_PATTERN = "hdfs://localhost:9000/weather_data/raw_actual_*.parquet"
-    HDFS_FORECAST_PATTERN = "hdfs://localhost:9000/weather_data/raw_forecast_*.parquet"
-    HDFS_OUTPUT_DIR = "/weather_data" # Đường dẫn này giữ nguyên vì dùng cho lệnh gọi shell hdfs dfs -put               
+    # Cấu hình đường dẫn tuyệt đối HDFS (đã comment vì chạy local)
+    # HDFS_ACTUAL_PATTERN = "hdfs://localhost:9000/weather_data/raw_actual_*.parquet"
+    # HDFS_FORECAST_PATTERN = "hdfs://localhost:9000/weather_data/raw_forecast_*.parquet"
+    # HDFS_OUTPUT_DIR = "/weather_data" 
     script_dir = os.path.dirname(os.path.abspath(__file__))
     project_dir = os.path.dirname(script_dir)
     LOCAL_DATA_DIR = os.path.join(project_dir, "data")
     os.makedirs(LOCAL_DATA_DIR, exist_ok=True)
+    
+    # Sử dụng Pattern cho file local
+    LOCAL_ACTUAL_PATTERN = os.path.join(LOCAL_DATA_DIR, "raw_actual_*.parquet")
+    LOCAL_FORECAST_PATTERN = os.path.join(LOCAL_DATA_DIR, "raw_forecast_*.parquet")
     
     print("="*50)
     print("BẮT ĐẦU CHẠY SPARK ĐỂ TẠO DATASET MACHINE LEARNING...")
@@ -164,8 +168,8 @@ if __name__ == "__main__":
     spark = get_spark_session()
     
     try:
-        # Bước 1: Đọc cả 2 rổ dữ liệu
-        df_act, df_fore = extract_data(spark, HDFS_ACTUAL_PATTERN, HDFS_FORECAST_PATTERN)
+        # Bước 1: Đọc cả 2 rổ dữ liệu từ local
+        df_act, df_fore = extract_data(spark, LOCAL_ACTUAL_PATTERN, LOCAL_FORECAST_PATTERN)
         
         # Bước 2: Cleanup riêng biệt
         df_act_clean, df_fore_clean = clean_data(df_act, df_fore)
