@@ -1,4 +1,6 @@
 # Ignore data files
 data/
+logs/
 *.parquet
 *.csv
+*.log
