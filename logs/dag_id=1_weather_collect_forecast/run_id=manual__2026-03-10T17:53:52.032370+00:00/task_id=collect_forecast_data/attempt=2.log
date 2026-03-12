@@ -1,0 +1,48 @@
+[2026-03-10T17:55:57.867+0000] {taskinstance.py:1979} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: 1_weather_collect_forecast.collect_forecast_data manual__2026-03-10T17:53:52.032370+00:00 [queued]>
+[2026-03-10T17:55:57.873+0000] {taskinstance.py:1979} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: 1_weather_collect_forecast.collect_forecast_data manual__2026-03-10T17:53:52.032370+00:00 [queued]>
+[2026-03-10T17:55:57.873+0000] {taskinstance.py:2193} INFO - Starting attempt 2 of 3
+[2026-03-10T17:55:57.884+0000] {taskinstance.py:2214} INFO - Executing <Task(BashOperator): collect_forecast_data> on 2026-03-10 17:53:52.032370+00:00
+[2026-03-10T17:55:57.890+0000] {standard_task_runner.py:60} INFO - Started process 114 to run task
+[2026-03-10T17:55:57.895+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', '1_weather_collect_forecast', 'collect_forecast_data', 'manual__2026-03-10T17:53:52.032370+00:00', '--job-id', '38', '--raw', '--subdir', 'DAGS_FOLDER/weather_forecast_dag.py', '--cfg-path', '/tmp/tmpubrcy_33']
+[2026-03-10T17:55:57.897+0000] {standard_task_runner.py:88} INFO - Job 38: Subtask collect_forecast_data
+[2026-03-10T17:55:57.934+0000] {task_command.py:423} INFO - Running <TaskInstance: 1_weather_collect_forecast.collect_forecast_data manual__2026-03-10T17:53:52.032370+00:00 [running]> on host 895e1d6fbe1c
+[2026-03-10T17:55:57.983+0000] {taskinstance.py:2510} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='duc1808' AIRFLOW_CTX_DAG_ID='1_weather_collect_forecast' AIRFLOW_CTX_TASK_ID='collect_forecast_data' AIRFLOW_CTX_EXECUTION_DATE='2026-03-10T17:53:52.032370+00:00' AIRFLOW_CTX_TRY_NUMBER='2' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-03-10T17:53:52.032370+00:00'
+[2026-03-10T17:55:57.985+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2026-03-10T17:55:57.985+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', 'python3 /opt/***/scripts/collect_forecast_data.py']
+[2026-03-10T17:55:57.998+0000] {subprocess.py:86} INFO - Output:
+[2026-03-10T17:55:59.141+0000] {subprocess.py:93} INFO - Gọi API lấy 40 mốc DỰ BÁO tương lai cho CITY_ID=1566083 lúc 2026-03-11 00:55:58
+[2026-03-10T17:55:59.141+0000] {subprocess.py:93} INFO - 
+[2026-03-10T17:55:59.141+0000] {subprocess.py:93} INFO - [+] Số mốc dự báo thu thập được: 8
+[2026-03-10T17:55:59.141+0000] {subprocess.py:93} INFO - Mẫu 3 dòng đầu (mốc gần nhất 3h, 6h, 9h tới):
+[2026-03-10T17:55:59.142+0000] {subprocess.py:93} INFO -  CityID Forecast_Created_Time         Target_Time  Temperature  Humidity      Description  WindSpeed  WindDirection  CloudRate  RainThreeHour
+[2026-03-10T17:55:59.142+0000] {subprocess.py:93} INFO - 1566083   2026-03-11 00:55:58 2026-03-11 01:00:00        27.26        78       light rain       1.01            333          0           0.11
+[2026-03-10T17:55:59.142+0000] {subprocess.py:93} INFO - 1566083   2026-03-11 00:55:58 2026-03-11 04:00:00        26.69        76       light rain       0.24            279         25           0.28
+[2026-03-10T17:55:59.142+0000] {subprocess.py:93} INFO - 1566083   2026-03-11 00:55:58 2026-03-11 07:00:00        26.33        70 scattered clouds       1.09            293         41           0.00
+[2026-03-10T17:55:59.142+0000] {subprocess.py:93} INFO - Traceback (most recent call last):
+[2026-03-10T17:55:59.142+0000] {subprocess.py:93} INFO -   File "/opt/***/scripts/collect_forecast_data.py", line 92, in <module>
+[2026-03-10T17:55:59.143+0000] {subprocess.py:93} INFO -     df.to_parquet(local_file_path, index=False)
+[2026-03-10T17:55:59.143+0000] {subprocess.py:93} INFO -   File "/home/***/.local/lib/python3.8/site-packages/pandas/core/frame.py", line 2889, in to_parquet
+[2026-03-10T17:55:59.143+0000] {subprocess.py:93} INFO -     return to_parquet(
+[2026-03-10T17:55:59.143+0000] {subprocess.py:93} INFO -   File "/home/***/.local/lib/python3.8/site-packages/pandas/io/parquet.py", line 411, in to_parquet
+[2026-03-10T17:55:59.143+0000] {subprocess.py:93} INFO -     impl.write(
+[2026-03-10T17:55:59.144+0000] {subprocess.py:93} INFO -   File "/home/***/.local/lib/python3.8/site-packages/pandas/io/parquet.py", line 161, in write
+[2026-03-10T17:55:59.144+0000] {subprocess.py:93} INFO -     path_or_handle, handles, kwargs["filesystem"] = _get_path_or_handle(
+[2026-03-10T17:55:59.144+0000] {subprocess.py:93} INFO -   File "/home/***/.local/lib/python3.8/site-packages/pandas/io/parquet.py", line 110, in _get_path_or_handle
+[2026-03-10T17:55:59.144+0000] {subprocess.py:93} INFO -     handles = get_handle(
+[2026-03-10T17:55:59.144+0000] {subprocess.py:93} INFO -   File "/home/***/.local/lib/python3.8/site-packages/pandas/io/common.py", line 868, in get_handle
+[2026-03-10T17:55:59.144+0000] {subprocess.py:93} INFO -     handle = open(handle, ioargs.mode)
+[2026-03-10T17:55:59.145+0000] {subprocess.py:93} INFO - PermissionError: [Errno 13] Permission denied: '/opt/***/data/raw_forecast_20260311_005558.parquet'
+[2026-03-10T17:55:59.191+0000] {subprocess.py:97} INFO - Command exited with return code 1
+[2026-03-10T17:55:59.199+0000] {taskinstance.py:2728} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/models/taskinstance.py", line 444, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/models/taskinstance.py", line 414, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/operators/bash.py", line 212, in execute
+    raise AirflowException(
+airflow.exceptions.AirflowException: Bash command failed. The command returned a non-zero exit code 1.
+[2026-03-10T17:55:59.201+0000] {taskinstance.py:1149} INFO - Marking task as UP_FOR_RETRY. dag_id=1_weather_collect_forecast, task_id=collect_forecast_data, execution_date=20260310T175352, start_date=20260310T175557, end_date=20260310T175559
+[2026-03-10T17:55:59.214+0000] {standard_task_runner.py:107} ERROR - Failed to execute job 38 for task collect_forecast_data (Bash command failed. The command returned a non-zero exit code 1.; 114)
+[2026-03-10T17:55:59.235+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 1
+[2026-03-10T17:55:59.247+0000] {taskinstance.py:3309} INFO - 0 downstream tasks scheduled from follow-on schedule check
