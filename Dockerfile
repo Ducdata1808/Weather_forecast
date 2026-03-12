@@ -15,5 +15,5 @@ ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 
 # 2. Cài đặt các thư viện Python của dự án bạn
 USER airflow
-COPY requirements.txt /
-RUN pip install --no-cache-dir "apache-airflow==${AIRFLOW_VERSION}" -r /requirements.txt
+COPY requirement.txt /
+RUN pip install --no-cache-dir -r /requirement.txt

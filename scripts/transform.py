@@ -11,7 +11,12 @@ os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-17-openjdk-amd64"
 def get_spark_session():
     return SparkSession.builder \
         .appName("WeatherForecastTransformation") \
-        .master("local[*]") \
+        .master("local[2]") \
+        .config("spark.driver.memory", "512m") \
+        .config("spark.executor.memory", "512m") \
+        .config("spark.sql.shuffle.partitions", "4") \
+        .config("spark.driver.maxResultSize", "256m") \
+        .config("spark.ui.enabled", "false") \
         .getOrCreate()
 
 def extract_data(spark, hdfs_actual_path, hdfs_forecast_path):
