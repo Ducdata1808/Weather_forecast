@@ -193,7 +193,7 @@ if __name__ == "__main__":
         df_final.select("Target_Time", "Forecast_Temperature", "Actual_Temperature", "Target_Error", "Lead_Time_Hours").show(5, truncate=False)
         
         # Bước 6: Load ra Parquet 
-        load_data(df_final, HDFS_OUTPUT_DIR, LOCAL_DATA_DIR)
+        load_data(df_final, None, LOCAL_DATA_DIR)
         
     except Exception as e:
         print(f"[-] Lỗi trong quá trình chạy Spark Pipeline: {e}")
