@@ -101,7 +101,7 @@ def join_and_calculate_error(df_actual, df_forecast):
         (df_forecast["Target_Time"] == df_actual["DateTime"]) & 
         (df_forecast["CityID"] == df_actual["CityID"]),
         "inner"
-    )
+    ).drop(df_actual["CityID"])
     
     # Tính Cột Mục Tiêu để Model Linear Regression dự đoán (Y)
     # Sai Số = Nhiệt độ Thực tế - Nhiệt độ Dự báo
