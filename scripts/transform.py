@@ -22,43 +22,41 @@ def get_spark_session():
         .getOrCreate()
 
 def extract_data(spark, hdfs_actual_path, hdfs_forecast_path):
-    """Đọc dữ liệu thực tế và dữ liệu dự báo từ HDFS"""
+    """Đọc dữ liệu thực tế và dữ liệu dự báo từ Local/HDFS và sửa lỗi Schema Merge"""
     from pyspark.sql.types import StructType, StructField, StringType, DoubleType, LongType
-    
-    # Định nghĩa lược đồ chuẩn cho Actual Data
-    actual_schema = StructType([
-        StructField("CityID", LongType(), True),
-        StructField("DateTime", StringType(), True),
-        StructField("Temperature", DoubleType(), True),
-        StructField("Humidity", LongType(), True),
-        StructField("Description", StringType(), True),
-        StructField("WindSpeed", DoubleType(), True),
-        StructField("WindDirection", LongType(), True),
-        StructField("CloudRate", LongType(), True),
-        StructField("RainOneHour", DoubleType(), True), # Ép kiểu Double
-        StructField("SunRise", StringType(), True),
-        StructField("SunSet", StringType(), True)
-    ])
-    
-    # Định nghĩa lược đồ chuẩn cho Forecast Data
-    forecast_schema = StructType([
-        StructField("CityID", LongType(), True),
-        StructField("Target_Time", StringType(), True),
-        StructField("Forecast_Created_Time", StringType(), True),
-        StructField("Temperature", DoubleType(), True),
-        StructField("Humidity", LongType(), True),
-        StructField("Description", StringType(), True),
-        StructField("WindSpeed", DoubleType(), True),
-        StructField("WindDirection", LongType(), True),
-        StructField("CloudRate", LongType(), True),
-        StructField("RainThreeHour", DoubleType(), True) # Ép kiểu Double
-    ])
+    import glob
+    from pyspark.sql.functions import col
 
-    print(f"[*] Đang đọc Actual Data từ: {hdfs_actual_path}")
-    df_actual = spark.read.schema(actual_schema).parquet(hdfs_actual_path)
+    # Hàm đọc danh sách file và ép kiểu trước khi gộp
+    def read_and_union(path_pattern, is_forecast=False):
+        files = glob.glob(path_pattern)
+        if not files:
+            # Nếu không tìm thấy file nào (đề phòng)
+            empty_schema = StructType([StructField("empty", StringType(), True)])
+            return spark.createDataFrame([], empty_schema)
+
+        df_merged = None
+        for file in files:
+            df_temp = spark.read.parquet(file)
+            
+            # Ép các cột dễ bị sai lệch (INT64 vs DOUBLE) về DoubleType()
+            cols_to_cast = ["Temperature", "WindSpeed", "RainOneHour", "RainThreeHour"]
+            for c in cols_to_cast:
+                if c in df_temp.columns:
+                    df_temp = df_temp.withColumn(c, col(c).cast(DoubleType()))
+                    
+            if df_merged is None:
+                df_merged = df_temp
+            else:
+                df_merged = df_merged.unionByName(df_temp, allowMissingColumns=True)
+                
+        return df_merged
+
+    print(f"[*] Đang đọc và hợp nhất Actual Data từ: {hdfs_actual_path}")
+    df_actual = read_and_union(hdfs_actual_path, is_forecast=False)
     
-    print(f"[*] Đang đọc Forecast Data từ: {hdfs_forecast_path}")
-    df_forecast = spark.read.schema(forecast_schema).parquet(hdfs_forecast_path)
+    print(f"[*] Đang đọc và hợp nhất Forecast Data từ: {hdfs_forecast_path}")
+    df_forecast = read_and_union(hdfs_forecast_path, is_forecast=True)
     
     return df_actual, df_forecast
 
