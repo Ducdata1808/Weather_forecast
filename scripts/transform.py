@@ -17,6 +17,8 @@ def get_spark_session():
         .config("spark.sql.shuffle.partitions", "4") \
         .config("spark.driver.maxResultSize", "256m") \
         .config("spark.ui.enabled", "false") \
+        .config("spark.sql.parquet.enableVectorizedReader", "false") \
+        .config("spark.sql.parquet.mergeSchema", "true") \
         .getOrCreate()
 
 def extract_data(spark, hdfs_actual_path, hdfs_forecast_path):
