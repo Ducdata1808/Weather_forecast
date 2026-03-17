@@ -23,11 +23,42 @@ def get_spark_session():
 
 def extract_data(spark, hdfs_actual_path, hdfs_forecast_path):
     """Đọc dữ liệu thực tế và dữ liệu dự báo từ HDFS"""
+    from pyspark.sql.types import StructType, StructField, StringType, DoubleType, LongType
+    
+    # Định nghĩa lược đồ chuẩn cho Actual Data
+    actual_schema = StructType([
+        StructField("CityID", LongType(), True),
+        StructField("DateTime", StringType(), True),
+        StructField("Temperature", DoubleType(), True),
+        StructField("Humidity", LongType(), True),
+        StructField("Description", StringType(), True),
+        StructField("WindSpeed", DoubleType(), True),
+        StructField("WindDirection", LongType(), True),
+        StructField("CloudRate", LongType(), True),
+        StructField("RainOneHour", DoubleType(), True), # Ép kiểu Double
+        StructField("SunRise", StringType(), True),
+        StructField("SunSet", StringType(), True)
+    ])
+    
+    # Định nghĩa lược đồ chuẩn cho Forecast Data
+    forecast_schema = StructType([
+        StructField("CityID", LongType(), True),
+        StructField("Target_Time", StringType(), True),
+        StructField("Forecast_Created_Time", StringType(), True),
+        StructField("Temperature", DoubleType(), True),
+        StructField("Humidity", LongType(), True),
+        StructField("Description", StringType(), True),
+        StructField("WindSpeed", DoubleType(), True),
+        StructField("WindDirection", LongType(), True),
+        StructField("CloudRate", LongType(), True),
+        StructField("RainThreeHour", DoubleType(), True) # Ép kiểu Double
+    ])
+
     print(f"[*] Đang đọc Actual Data từ: {hdfs_actual_path}")
-    df_actual = spark.read.parquet(hdfs_actual_path)
+    df_actual = spark.read.schema(actual_schema).parquet(hdfs_actual_path)
     
     print(f"[*] Đang đọc Forecast Data từ: {hdfs_forecast_path}")
-    df_forecast = spark.read.parquet(hdfs_forecast_path)
+    df_forecast = spark.read.schema(forecast_schema).parquet(hdfs_forecast_path)
     
     return df_actual, df_forecast
 

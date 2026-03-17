@@ -6,6 +6,43 @@ import pendulum
 # Cài đặt múi giờ Việt Nam
 local_tz = pendulum.timezone("Asia/Ho_Chi_Minh")
 
+import os
+import requests
+from dotenv import load_dotenv
+
+# Load Telegram credentials
+load_dotenv(dotenv_path="/opt/airflow/.env.telegram")
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+
+def send_telegram_success_msg(context):
+    """Gửi thông báo Telegram khi Task chạy thành công"""
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        print("Thiếu cấu hình Telegram Token hoặc Chat ID, bỏ qua gửi thông báo.")
+        return
+
+    task_id = context.get('task_instance').task_id
+    execution_date = context.get('execution_date').in_timezone(local_tz).strftime('%Y-%m-%d %H:%M:%S')
+    
+    message = (
+        f"✅ *Task Thành Công!*\n\n"
+        f"• *Task ID:* `{task_id}`\n"
+        f"• *Thời gian chạy:* `{execution_date}`\n"
+        f"• *Dự án:* Weather Forecast"
+    )
+
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+    payload = {
+        'chat_id': TELEGRAM_CHAT_ID,
+        'text': message,
+        'parse_mode': 'Markdown'
+    }
+    
+    try:
+        requests.post(url, json=payload)
+    except Exception as e:
+        print(f"Lỗi khi gửi thông báo Telegram: {e}")
+
 # Thông số chung cho các DAGs
 default_args = {
     'owner': 'duc1808',
@@ -14,6 +51,7 @@ default_args = {
     'email_on_retry': False,
     'retries': 2,
     'retry_delay': timedelta(minutes=2),
+    'on_success_callback': send_telegram_success_msg,
 }
 
 # Khai báo đường dẫn trỏ tới thư mục script của bạn

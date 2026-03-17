@@ -4,3 +4,4 @@ logs/
 *.parquet
 *.csv
 *.log
+.env.telegram
