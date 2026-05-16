@@ -7,3 +7,4 @@ logs/
 .env.telegram
 .venv
 config/
+.env
