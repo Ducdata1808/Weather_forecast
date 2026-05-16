@@ -25,7 +25,7 @@ def send_telegram_success_msg(context):
     execution_date = context.get('execution_date').in_timezone(local_tz).strftime('%Y-%m-%d %H:%M:%S')
     
     message = (
-        f"✅ *Task Thành Công!*\n\n"
+        f"*Task Thành Công!*\n\n"
         f"• *Task ID:* `{task_id}`\n"
         f"• *Thời gian chạy:* `{execution_date}`\n"
         f"• *Dự án:* Weather Forecast"
@@ -99,7 +99,6 @@ task_collect_actual = BashOperator(
 
 # =====================================================================
 # DAG 3: SPARK TRANSFORM BẢNG JOIN (1 Lần/Ngày lúc 23h50 đêm)
-# Đọc cục HDFS hôm nay, Join lại và nén thành ML Feature Ready Dataset
 # =====================================================================
 dag_transform = DAG(
     '3_weather_spark_transform',
@@ -116,11 +115,3 @@ task_run_transform = BashOperator(
     bash_command=f'python3 {SCRIPT_DIR}/transform.py',
     dag=dag_transform,
 )
-
-# PHẦN MODEL SE ĐƯỢC THÊM SAU:
-# task_train_model = BashOperator(
-#     task_id='train_error_prediction_model',
-#     bash_command=f'python3 {SCRIPT_DIR}/train.py',
-#     dag=dag_transform,
-# )
-# task_run_transform >> task_train_model
