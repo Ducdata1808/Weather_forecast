@@ -4,6 +4,9 @@ from datetime import datetime
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, month, hour, sin, cos, round, lit, when, unix_timestamp, monotonically_increasing_id
 from pyspark.ml.feature import StringIndexer, OneHotEncoder
+from pyspark.sql.types import StructType, StructField, StringType, DoubleType, LongType
+import glob
+import math
 import shutil
 
 os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-17-openjdk-amd64"
@@ -22,11 +25,6 @@ def get_spark_session():
         .getOrCreate()
 
 def extract_data(spark, hdfs_actual_path, hdfs_forecast_path):
-    """Đọc dữ liệu thực tế và dữ liệu dự báo từ Local/HDFS và sửa lỗi Schema Merge"""
-    from pyspark.sql.types import StructType, StructField, StringType, DoubleType, LongType
-    import glob
-    from pyspark.sql.functions import col
-
     # Hàm đọc danh sách file và ép kiểu trước khi gộp
     def read_and_union(path_pattern, is_forecast=False):
         files = glob.glob(path_pattern)
@@ -120,8 +118,7 @@ def join_and_calculate_error(df_actual, df_forecast):
 
 def create_features(df):
     """Tạo features Time-series từ cột Target_Time (Thời điểm xảy ra sự kiện)"""
-    import math
-    
+
     df = df.withColumn("Target_Time_ts", unix_timestamp("Target_Time", "yyyy-MM-dd HH:mm:ss").cast("timestamp"))
     df = df.withColumn("SunRise_ts", unix_timestamp("Actual_SunRise", "yyyy-MM-dd HH:mm:ss").cast("timestamp"))
     df = df.withColumn("SunSet_ts", unix_timestamp("Actual_SunSet", "yyyy-MM-dd HH:mm:ss").cast("timestamp"))
@@ -173,22 +170,9 @@ def load_data(df, hdfs_output_dir, local_data_dir):
     
     shutil.rmtree(local_tmp_path)
     print(f"\n[+] Đã xuất file Local (Machine Learning Ready Dataset) tại: {local_final_path}")
-    
-    # Upload lên HDFS (tạm thời comment lại)
-    # hdfs_file_path = f"{hdfs_output_dir}/{file_name}"
-    # subprocess.run(["hdfs", "dfs", "-mkdir", "-p", hdfs_output_dir], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    # 
-    # result = subprocess.run(["hdfs", "dfs", "-put", local_final_path, hdfs_file_path], capture_output=True, text=True)
-    # if result.returncode == 0:
-    #     print(f"[+] Đã upload thành công lên HDFS tại: {hdfs_file_path}")
-    # else:
-    #     print(f"[-] Lỗi khi upload lên HDFS:\n{result.stderr}")
+
 
 if __name__ == "__main__":
-    # Cấu hình đường dẫn tuyệt đối HDFS (đã comment vì chạy local)
-    # HDFS_ACTUAL_PATTERN = "hdfs://localhost:9000/weather_data/raw_actual_*.parquet"
-    # HDFS_FORECAST_PATTERN = "hdfs://localhost:9000/weather_data/raw_forecast_*.parquet"
-    # HDFS_OUTPUT_DIR = "/weather_data" 
     script_dir = os.path.dirname(os.path.abspath(__file__))
     project_dir = os.path.dirname(script_dir)
     LOCAL_DATA_DIR = os.path.join(project_dir, "data")

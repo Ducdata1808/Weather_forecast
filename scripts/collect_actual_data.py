@@ -4,12 +4,17 @@ import os
 import subprocess
 from datetime import datetime
 import pytz
+from dotenv import load_dotenv
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+project_dir = os.path.dirname(script_dir)
+load_dotenv(os.path.join(project_dir, '.env'))
 
 # ============================================================
 # CẤU HÌNH
 # ============================================================
-API_KEY = "453116d36315e347ce5232925acc96ae"
-CITY_ID = 1566083          # ID của TP. Hồ Chí Minh trên OpenWeatherMap
+API_KEY = os.getenv("OPENWEATHER_API_KEY")
+CITY_ID = int(os.getenv("CITY_ID", 1566083))
 BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 
 print(f"Gọi API thời tiết hiện tại cho CITY_ID={CITY_ID}")
@@ -94,22 +99,6 @@ if response.status_code == 200:
     df.to_parquet(local_file_path, index=False)
     print(f"\n[+] Đã xuất file local tại: {local_file_path}")
     
-    # 2. Lưu file lên HDFS (tạm thời comment vì chỉ lưu local)
-    # hdfs_dir = "/weather_data"
-    # hdfs_file_path = f"{hdfs_dir}/{file_name}"
-    # 
-    # try:
-    #     # Tạo thư mục trên HDFS nếu chưa có
-    #     subprocess.run(["hdfs", "dfs", "-mkdir", "-p", hdfs_dir], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    #     
-    #     # Đưa file từ local lên HDFS
-    #     result = subprocess.run(["hdfs", "dfs", "-put", local_file_path, hdfs_file_path], capture_output=True, text=True)
-    #     if result.returncode == 0:
-    #         print(f"[+] Đã upload thành công lên HDFS tại: {hdfs_file_path}")
-    #     else:
-    #         print(f"[-] Lỗi khi upload lên HDFS:\n{result.stderr}")
-    # except FileNotFoundError:
-    #     print("[-] Lỗi: Không tìm thấy lệnh 'hdfs'. Vui lòng kiểm tra lại môi trường Hadoop.")
 else:
     print("[-] Lỗi khi gọi API:")
     print(response.json())
