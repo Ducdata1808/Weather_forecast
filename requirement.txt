@@ -2,5 +2,4 @@
 # Chỉ pin pyspark ở version cụ thể vì Airflow không quản lý nó
 requests>=2.31.0
 fastparquet>=2024.2.0
-pyspark==3.5.0
 dotenv>=1.0.0

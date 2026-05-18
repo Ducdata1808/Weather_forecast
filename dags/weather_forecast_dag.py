@@ -98,20 +98,20 @@ task_collect_actual = BashOperator(
 )
 
 # =====================================================================
-# DAG 3: SPARK TRANSFORM BẢNG JOIN (1 Lần/Ngày lúc 23h50 đêm)
+# DAG 3: PANDAS TRANSFORM BẢNG JOIN (1 Lần/Ngày lúc 23h50 đêm)
 # =====================================================================
 dag_transform = DAG(
-    '3_weather_spark_transform',
+    '3_weather_pandas_transform',
     default_args=default_args,
-    description='Run Spark to merge Forecast and Actual data into ML Label',
+    description='Run Pandas to merge Forecast and Actual data into ML Label',
     schedule='50 23 * * *', # Chạy lúc 23:50 phút mỗi tối
     start_date=datetime(2026, 3, 7, tzinfo=local_tz),
     catchup=False,
-    tags=['weather', 'spark', 'etl'],
+    tags=['weather', 'pandas', 'etl'],
 )
 
 task_run_transform = BashOperator(
-    task_id='run_spark_transform',
+    task_id='run_transform',
     bash_command=f'python3 {SCRIPT_DIR}/transform.py',
     dag=dag_transform,
 )

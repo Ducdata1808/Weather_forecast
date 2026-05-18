@@ -3,7 +3,7 @@
 ##  Giới thiệu
 Dự án này là một **Data Pipeline** hoàn chỉnh từ khâu thu thập dữ liệu (Data Ingestion), tiền xử lý (ETL) đến áp dụng Machine Learning để hiệu chỉnh và dự đoán độ chính xác của dự báo thời tiết tại khu vực TP. Hồ Chí Minh.
 
-Hệ thống tự động lấy dữ liệu từ OpenWeatherMap bằng **Apache Airflow**, sử dụng **Apache Spark** để xử lý tập dữ liệu, và áp dụng mô hình **Linear Regression** (Scikit-Learn) để dự báo nhiệt độ thực tế dựa trên các dữ liệu lịch sử sai số.
+Hệ thống tự động lấy dữ liệu từ OpenWeatherMap bằng **Apache Airflow**, sử dụng **Pandas** để xử lý tập dữ liệu, và áp dụng mô hình **Linear Regression** (Scikit-Learn) để dự báo nhiệt độ thực tế dựa trên các dữ liệu lịch sử sai số.
 
 ---
 
@@ -25,7 +25,7 @@ weather_forecast_project/
 │   ├── collect_forecast_data_for_predict.py # Lấy dữ liệu dự báo cho quá trình predict
 │   ├── linear_regression.py     # Code huấn luyện và đánh giá mô hình hồi quy (phòng thí nghiệm)
 │   ├── predict_today.py         # Dự đoán nhiệt độ thực tế của ngày hôm nay (chạy thực tế)
-│   └── transform.py             # Xử lý ETL (làm sạch, nối bảng, tạo đặc trưng) bằng PySpark
+│   └── transform.py             # Xử lý ETL (làm sạch, nối bảng, tạo đặc trưng) bằng Pandas
 └── data/
     ├── data/                    # Chứa dữ liệu thô (raw) và bộ dữ liệu Machine Learning (ml_ready)
     ├── raw_predict_data/        # Chứa dữ liệu dự báo dành riêng cho việc lấy kết quả hôm nay
@@ -83,7 +83,7 @@ Hệ thống cung cấp 2 chế độ: **Chạy tự động** để thu thập 
 2. Bật (Unpause) 3 DAGs có sẵn trong giao diện:
    - `1_weather_collect_forecast`: Tự động chạy lúc 00:05 sáng để lấy "Đề bài" dự báo.
    - `2_weather_collect_actual`: Tự động chạy 8 lần/ngày để lấy "Đáp án" thời tiết thực tế.
-   - `3_weather_spark_transform`: Tự động chạy lúc 23:50 đêm bằng Spark để gộp 2 bảng thành tập dữ liệu Machine Learning (`ml_ready_dataset`).
+   - `3_weather_pandas_transform`: Tự động chạy lúc 23:50 đêm bằng Pandas để gộp 2 bảng thành tập dữ liệu Machine Learning (`ml_ready_dataset`).
 
 ### Cách 2: Chạy dự báo lấy kết quả ngay cho ngày hôm nay
 Nếu hệ thống đã có đủ file lịch sử (`ml_ready_dataset`), bạn có thể tiến hành lấy kết quả dự đoán nhiệt độ trong ngày hôm nay bằng cách chạy 2 lệnh sau ở Terminal:
