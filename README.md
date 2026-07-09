@@ -95,5 +95,3 @@ python scripts/collect_forecast_data_for_predict.py
 # Bước 2: Model lập tức học dữ liệu lịch sử và hiệu chỉnh sai số cho dự báo của hôm nay
 python scripts/predict_today.py
 ```
-Kết quả dự đoán sẽ được xuất ra và lưu tại thư mục:
-`data/result_predict_today/prediction_today_YYYYMMDD.csv`.
